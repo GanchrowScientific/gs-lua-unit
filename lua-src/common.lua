@@ -4,12 +4,10 @@
 -- luacheck: ignore 111
 -- luacheck: globals redis cjson doTest focussedTest getFile flushKeys isFunction yaml client
 
+-- Require globally
 redis = require('redis')
 cjson = require('cjson')
 yaml = require('yaml')
-
-local get_config_option = require('lua-src.ext.get_config_option')
-local Expector = require('lua-test.expector')
 
 -- ensure helper modules or mocks are required over actual modules
 local dir = arg[0]:match('(.*/)') or ''
@@ -17,7 +15,12 @@ local dir = arg[0]:match('(.*/)') or ''
 -- strips out last segment of path
 local kind = dir:reverse():sub(2, dir:reverse():sub(2):find('/')):reverse()
 print(dir, kind)
-package.path = dir .. '?.lua;' .. dir .. '../?.lua;' .. dir .. '../../?.lua;'.. package.path
+package.path = dir .. '?.lua;' .. dir .. '../?.lua;' .. dir .. '../../?.lua;'.. dir ..
+  '../../node_modules/gs-lua-unit/lua-src?.lua;'.. package.path
+
+local get_config_option = require('/getConfigOption')
+local Expector = require('/expector')
+
 
 function isFunction(thing)
   return type(thing) == 'function'

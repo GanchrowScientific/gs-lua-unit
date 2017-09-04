@@ -1,7 +1,7 @@
 -- Copyright © 2017 Ganchrow Scientific, SA all rights reserved
 --
 
-local utils = require('lua-test.utilities')
+local utils = require('/utilities')
 
 local Expector = { testStarted = {}, noFailures = true }
 
