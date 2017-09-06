@@ -1,0 +1,100 @@
+-- Copyright © 2017 Ganchrow Scientific, SA all rights reserved
+--
+-- luacheck: ignore 111
+-- luacheck: globals redis cjson yaml
+
+local get_config_option = require('/getConfigOption')
+
+return function(redis, redisConfig)
+  local env = os.getenv('EXECUTION_ENVIRONMENT')
+  if (env ~= 'TESTING') then
+    env = 'DEVELOPMENT'
+  end
+
+  if not redisConfig then
+    local config = yaml.loadpath('configs/redis.yaml')
+    redisConfig = get_config_option.get(config, env, 'data', 'host', 'port', 'auth_pass', 'db', 'flush')
+  end
+
+  if not (redisConfig.host and redisConfig.port) then
+    print('Need host and port, but got: ' .. (redisConfig.host or '<NONE>') .. ':' .. (redisConfig.port or '<NONE>'))
+    os.exit(1)
+  end
+
+  print(redisConfig.host)
+  print(redisConfig.port)
+  print(redisConfig.auth_pass)
+  print(os.getenv('EXECUTION_ENVIRONMENT'))
+
+  local client = redis.connect(redisConfig.host, redisConfig.port)
+  if redisConfig.auth_pass then
+    client:auth(redisConfig.auth_pass)
+  end
+  if redisConfig.db then
+    print('Using DB ' .. redisConfig.db)
+    client:select(redisConfig.db)
+  else
+    print('Using DB 9')
+    client:select(9)
+  end
+  if redisConfig.flush then
+    client:flushdb()
+  end
+
+  local function invoke(cmd, ...)
+    return assert(loadstring('return client:' .. cmd .. '(...)'))(...)
+  end
+
+  --[[
+    Override default Lua behaviour. HGETALL is modified to produce the
+    same result as the version built into Redis which returns a flat
+    array of {key 1, val 1, key 2, val2, ...} whereas Redis in Lua returns a
+    set {key 1 = val 1, key 2 = val 2, ...}
+  ]]
+  redis.call = function(cmd, ...)
+
+    -- uncomment for better debugging during tests
+    -- print(cmd .. ':' .. cjson.encode({...}))
+    cmd = string.lower(cmd)
+    local args = {...}
+    local result
+    if cmd == 'publish' then
+      local channel = 'publish:' .. args[1]
+      local val = args[2]
+      result = invoke('lpush', channel, val)
+    elseif cmd == 'hgetall' then
+      local initial = invoke(cmd, ...)
+      if initial then
+        result = {}
+        for key, val in pairs(initial) do
+          table.insert(result, key)
+          table.insert(result, val)
+        end
+      end
+    elseif (cmd == 'zrangebyscore' or cmd == 'zrevrangebyscore' or cmd == 'zrevrange' or cmd == 'zrange') and
+        ((type(args[4]) == 'string' and string.lower(args[4]) == 'withscores') or
+         (type(args[5]) == 'string' and string.lower(args[5]) == 'withscores')) then
+      local initial = invoke(cmd, ...)
+      if initial then
+        result = {}
+        for _, val in ipairs(initial) do
+          table.insert(result, val[1])
+          table.insert(result, val[2])
+        end
+      end
+    else
+      result = invoke(cmd, ...)
+    end
+
+    -- uncomment for better debugging during tests
+    -- print('command: ' .. cmd .. ' ' .. table.concat({...}, ' '))
+    -- print('result: ' .. cjson.encode(result))
+    return result
+  end
+
+  redis.log = function(msg)
+    print(msg)
+  end
+
+  return redis
+end

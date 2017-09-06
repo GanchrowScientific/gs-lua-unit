@@ -2,7 +2,6 @@
 --
 --
 
--- luacheck: globals adj_env setfenv
 local M = {}
 function M.get(config, env, field, ...)
   if not next(config) then
@@ -15,8 +14,8 @@ function M.get(config, env, field, ...)
     inner_environment = config['ENVIRONMENTS'][env]
     if not inner_environment then
       for k, _ in pairs(config['ENVIRONMENTS']) do
-        adj_env = string.gsub(k, '[.]**$', '.*')
-        if string.find(env, adj_env) then
+        local adjEnv = string.gsub(k, '[.]**$', '.*')
+        if string.find(env, adjEnv) then
           inner_environment = config['ENVIRONMENTS'][k]
           break
         end
@@ -25,7 +24,11 @@ function M.get(config, env, field, ...)
   end
   local inner_config = (inner_environment or {})[field] or {}
   for _, f in ipairs({...}) do
-    table.insert(res, inner_config[f] or config[field][f])
+    local value = (inner_config and inner_config[f]) or
+      config[field] and config[field][f]
+    if (value) then
+      res[f] = value
+    end
   end
   return res
 end
