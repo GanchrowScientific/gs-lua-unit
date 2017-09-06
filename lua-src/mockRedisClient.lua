@@ -6,14 +6,14 @@
 local get_config_option = require('/getConfigOption')
 
 return function(redis, redisConfig)
-  local env = os.getenv('EXECUTION_ENVIRONMENT')
-  if (env ~= 'TESTING') then
-    env = 'DEVELOPMENT'
+  local executionEnv = os.getenv('EXECUTION_ENVIRONMENT')
+  if (executionEnv ~= 'TESTING') then
+    executionEnv = 'DEVELOPMENT'
   end
 
   if not redisConfig then
     local config = yaml.loadpath('configs/redis.yaml')
-    redisConfig = get_config_option.get(config, env, 'data', 'host', 'port', 'auth_pass', 'db', 'flush')
+    redisConfig = get_config_option.get(config, executionEnv, 'data', 'host', 'port', 'auth_pass', 'db', 'flush')
   end
 
   if not (redisConfig.host and redisConfig.port) then
@@ -42,7 +42,10 @@ return function(redis, redisConfig)
   end
 
   local function invoke(cmd, ...)
-    return assert(loadstring('return client:' .. cmd .. '(...)'))(...)
+    local chunk = assert(loadstring('return client:' .. cmd .. '(...)'))
+    local sandbox_env = setmetatable({ client = client }, {__index = _G})
+    setfenv(chunk, sandbox_env)
+    return chunk(...)
   end
 
   --[[

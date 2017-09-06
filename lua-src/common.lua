@@ -42,8 +42,10 @@ local function getFile(scriptName)
 end
 -- loads the target module and optionally includes a set of upvalues (ie- local globals)
 local function safeLoadModule(name, upvalues)
-  local env = setmetatable(upvalues or { }, {__index = _G})
-  return assert(loadfile(getFile(name), 't', env))
+  local chunk = assert(loadfile(getFile(name)))
+  local sandbox_env = setmetatable(upvalues or { }, {__index = _G})
+  setfenv(chunk, sandbox_env)
+  return chunk
 end
 
 function generateTests(tableOfTests)
