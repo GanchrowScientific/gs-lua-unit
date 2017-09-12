@@ -8,6 +8,7 @@
 cjson = require('cjson')
 yaml = require('yaml')
 redis = require('redis')
+bit = require('bit')
 
 -- ensure helper modules or mocks are required over actual modules
 local dir = arg[0]:match('(.*/)') or ''
