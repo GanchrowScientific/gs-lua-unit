@@ -85,6 +85,9 @@ return function(redis, redisConfig)
           table.insert(result, val[2])
         end
       end
+    elseif (cmd == 'exists' or cmd == 'hexists') then
+      local initial = invoke(cmd, ...)
+      result = initial and 1 or 0
     else
       result = invoke(cmd, ...)
     end
