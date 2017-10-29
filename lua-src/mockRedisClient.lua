@@ -59,6 +59,11 @@ return function(redis, redisConfig)
     -- uncomment for better debugging during tests
     -- print(cmd .. ':' .. cjson.encode({...}))
     cmd = string.lower(cmd)
+
+    if (cmd == 'unlink') then
+      -- unlink not available in this client
+      cmd = 'del';
+    end
     local args = {...}
     local result
     if cmd == 'publish' then
