@@ -6,6 +6,22 @@
 local get_config_option = require('/getConfigOption')
 
 return function(redis, redisConfig)
+
+  -- redis-lua converts these command results to a boolean, but internally, they are returned as 0 or 1
+  local BOOLEAN_COMMANDS = {
+    exists = true, 
+    expire = true, 
+    hexists = true, 
+    hset = true, 
+    hsetnx = true, 
+    move = true,
+    pexpire = true , 
+    pexpireat = true , 
+    persist = true, 
+    renamenx = true, 
+    sismember = true, 
+  }
+
   local executionEnv = os.getenv('EXECUTION_ENVIRONMENT')
   if (executionEnv ~= 'TESTING') then
     executionEnv = 'DEVELOPMENT'
@@ -90,7 +106,7 @@ return function(redis, redisConfig)
           table.insert(result, val[2])
         end
       end
-    elseif (cmd == 'exists' or cmd == 'hexists') then
+    elseif (BOOLEAN_COMMANDS[cmd]) then
       local initial = invoke(cmd, ...)
       result = initial and 1 or 0
     else
