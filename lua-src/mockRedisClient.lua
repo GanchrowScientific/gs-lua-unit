@@ -9,17 +9,17 @@ return function(redis, redisConfig)
 
   -- redis-lua converts these command results to a boolean, but internally, they are returned as 0 or 1
   local BOOLEAN_COMMANDS = {
-    exists = true, 
-    expire = true, 
-    hexists = true, 
-    hset = true, 
-    hsetnx = true, 
+    exists = true,
+    expire = true,
+    hexists = true,
+    hset = true,
+    hsetnx = true,
     move = true,
-    pexpire = true , 
-    pexpireat = true , 
-    persist = true, 
-    renamenx = true, 
-    sismember = true, 
+    pexpire = true,
+    pexpireat = true,
+    persist = true,
+    renamenx = true,
+    sismember = true
   }
 
   local executionEnv = os.getenv('EXECUTION_ENVIRONMENT')
@@ -109,6 +109,17 @@ return function(redis, redisConfig)
     elseif (BOOLEAN_COMMANDS[cmd]) then
       local initial = invoke(cmd, ...)
       result = initial and 1 or 0
+    elseif (cmd == 'hmget') or (cmd == 'hmset') then
+      local builder
+      if type(args[2]) == 'table' then
+        builder = args[2]
+      else
+        builder = {}
+        for i = 2,#args do
+          table.insert(builder, args[i])
+        end
+      end
+      result = invoke(cmd, args[1], builder)
     else
       result = invoke(cmd, ...)
     end

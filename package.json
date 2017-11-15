@@ -1,6 +1,6 @@
 {
   "name": "gs-lua-unit",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Ganchrow Scientific Lua Unit Testing Framework",
   "author": "Ganchrow Scientific",
   "license": "SEE LICENSE IN LICENSE"
