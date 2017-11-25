@@ -109,7 +109,7 @@ return function(redis, redisConfig)
     elseif (BOOLEAN_COMMANDS[cmd]) then
       local initial = invoke(cmd, ...)
       result = initial and 1 or 0
-    elseif (cmd == 'hmget') or (cmd == 'hmset') then
+    elseif (cmd == 'hmget') then
       local builder
       if type(args[2]) == 'table' then
         builder = args[2]
