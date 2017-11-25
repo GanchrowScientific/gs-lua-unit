@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. "${HOME}/.luaver/luaver"
+luaver use 5.1.4
+luaver use-luarocks 2.3.0

@@ -2,6 +2,9 @@
   "name": "gs-lua-unit",
   "version": "1.0.5",
   "description": "Ganchrow Scientific Lua Unit Testing Framework",
+  "scripts": {
+    "prepare": "scripts/post-install.sh"
+  },
   "author": "Ganchrow Scientific",
   "license": "SEE LICENSE IN LICENSE"
 }
