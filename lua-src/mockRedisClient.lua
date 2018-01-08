@@ -27,8 +27,8 @@ return function(redis, redisConfig)
     executionEnv = 'DEVELOPMENT'
   end
 
-  if not redisConfig then
-    local config = yaml.loadpath('configs/redis.yaml')
+  if not (type(redisConfig) == 'table') then
+    local config = yaml.loadpath(redisConfig or 'configs/redis.yaml')
     redisConfig = get_config_option.get(config, executionEnv, 'data', 'host', 'port', 'auth_pass', 'db', 'flush')
   end
 
