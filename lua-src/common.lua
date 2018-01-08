@@ -16,12 +16,13 @@ local dir = arg[0]:match('(.*/)') or ''
 -- strips out last segment of path
 local kind = dir:reverse():sub(2, dir:reverse():sub(2):find('/')):reverse()
 local baseDir = '/../../target/test_scripts/'
-local focussedTest = arg[1]
+local projectPath = arg[1]
+local focussedTest = arg[2]
 
 print(dir, kind)
 
 package.path = dir .. '?.lua;' .. dir .. '../?.lua;' .. dir .. '../../?.lua;'.. dir ..
-  '../../node_modules/gs-lua-unit/lua-src?.lua;'.. package.path
+  (projectPath or '../../') .. 'node_modules/gs-lua-unit/lua-src?.lua;' .. package.path
 
 local Expector = require('/expector')
 local mockRedisClient = require('/mockRedisClient')
