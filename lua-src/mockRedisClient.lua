@@ -29,7 +29,7 @@ return function(redis, redisConfig)
 
   if not (type(redisConfig) == 'table') then
     local config = yaml.loadpath(redisConfig or 'configs/redis.yaml')
-    redisConfig = get_config_option.get(config, executionEnv, 'data', 'host', 'port', 'auth_pass', 'db', 'flush')
+    redisConfig = get_config_option.get(config, executionEnv, 'mockRedis', 'host', 'port', 'auth_pass', 'db', 'flush')
   end
 
   if not (redisConfig.host and redisConfig.port) then
