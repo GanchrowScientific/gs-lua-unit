@@ -2,11 +2,13 @@
 --
 -- provide general-purpose utility functions for the test framework
 
--- luacheck: globals isFunction
-
 -- compare two vectors (one-dimensional arrays) for element-by-element equality
 -- a vector of booleans is acceptable but nil elements are not
 local Module = {}
+
+function Module.isFunction(thing)
+  return type(thing) == 'function'
+end
 
 function Module.vectorEquals(a, b)
   if a == b then return true end
@@ -31,7 +33,7 @@ function Module.convertToDictionary(t, valCB)
     if idx % 2 == 1 then
       key = val
     else
-      if isFunction(valCB) then
+      if Module.isFunction(valCB) then
         val = valCB(val)
       end
       dict[key] = val
