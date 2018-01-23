@@ -58,6 +58,16 @@ function generateTests(tableOfTests)
   return tests
 end
 
+local function safeCall(with, expector, methodName, args, failMsg)
+  local fn = (methodName and with[methodName]) or with
+  if isFunction(fn) then
+    local ok, result = pcall(fn, unpack(args or {}))
+    if not ok then
+      expector:fail((methodName or failMsg).. ' raised an error: ' .. result)
+    end
+    return result
+  end
+end
 
 local function doTest(name, with)
   if focussedTest and not (focussedTest == name) then
@@ -67,25 +77,14 @@ local function doTest(name, with)
   expector:init()
   flushKeys()
 
-  if isFunction(with.preModuleLoad) then
-    with.preModuleLoad()
-  end
+  safeCall(with, expector, 'preModuleLoad', {})
 
-  local moduleFn = safeLoadModule(name, with.upvalues)
-  local moduleToTest = moduleFn()
-
-  if isFunction(with.setUp) then
-    with.setUp(moduleToTest)
-  end
-
-  local testResult
-  if isFunction(with.doTest) then
-    testResult = with.doTest(moduleToTest)
-  end
-  local shouldBeTrue = with.expect(testResult, expector, moduleToTest)
-  if isFunction(with.tearDown) then
-    with.tearDown(moduleToTest)
-  end
+  local moduleFn = safeCall(safeLoadModule, expector, nil, { name, with.upvalues }, 'Module load')
+  local moduleToTest = safeCall(moduleFn, expector, nil, { }, 'Module invocation')
+  safeCall(with, expector, 'setUp', {})
+  local testResult = safeCall(with, expector, 'doTest', {moduleToTest})
+  local shouldBeTrue = safeCall(with, expector, 'expect', { testResult, expector, moduleToTest })
+  safeCall(with, expector, 'tearDown', {})
   expector:done(shouldBeTrue)
 end
 

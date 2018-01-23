@@ -80,6 +80,11 @@ function Expector:expectFalsy(...)
   end
 end
 
+function Expector:fail(msg)
+  table.insert(self.failures, msg .. ' FAILED ')
+  table.insert(self.failures, debug.traceback())
+end
+
 function Expector:done(finalValue)
   local tag = utils.toDebugString(self.tag or '--')
   local name = utils.toDebugString(self.name or '--')
@@ -87,9 +92,9 @@ function Expector:done(finalValue)
   local finalMessage = name .. ' ' .. tag .. ' ' .. additionalMessage
   local isSuccess = finalValue and #self.failures == 0
   if isSuccess then
-    finalMessage = 'SUCCESS -- ' .. finalMessage
+    finalMessage = 'success -- ' .. finalMessage
   else
-    finalMessage = 'FAILURE -- ' .. finalMessage .. ' '
+    finalMessage = '!!FAILURE!! -- ' .. finalMessage .. ' '
   end
   print(finalMessage)
   if #self.failures > 0 then
