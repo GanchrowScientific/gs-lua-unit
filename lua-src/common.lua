@@ -19,10 +19,16 @@ local baseDir = '/../../target/test_scripts/'
 local projectPath = arg[1]
 local focussedTest = arg[2]
 
+if projectPath then
+  projectPath = projectPath .. '/'
+else
+  projectPath = dir .. '../../'
+end
+
 print(dir, kind)
 
 package.path = dir .. '?.lua;' .. dir .. '../?.lua;' .. dir .. '../../?.lua;' ..
-  ((projectPath .. '/') or (dir .. '../../')) .. 'node_modules/gs-lua-unit/lua-src/?.lua;' .. package.path
+  projectPath .. 'node_modules/gs-lua-unit/lua-src/?.lua;' .. package.path
 
 local Expector = require('/expector')
 local mockRedisClient = require('/mockRedisClient')
