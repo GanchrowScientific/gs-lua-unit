@@ -44,7 +44,10 @@ return function(redis, redisConfig)
 
   local client = redis.connect(redisConfig.host, redisConfig.port)
   if redisConfig.auth_pass then
-    client:auth(redisConfig.auth_pass)
+    local ok, res = pcall(function() return client:auth(redisConfig.auth_pass) end)
+    if not ok then
+      print('CONTINUABLE ERROR -- ' .. res)
+    end
   end
   if redisConfig.db then
     print('Using DB ' .. redisConfig.db)
