@@ -1,11 +1,17 @@
 {
   "name": "gs-lua-unit",
   "version": "1.3.1",
+  "repository": "https://github.com/GanchrowScientific/gs-lua-unit",
   "description": "Ganchrow Scientific Lua Unit Testing Framework",
   "scripts": {
-    "prepare": "scripts/post-install.sh"
+    "prepare": "scripts/post-install.sh",
+    "clean": "rm -rf target lib",
+    "prepublishOnly": "scripts/push-to-github.sh"
   },
   "author": "Ganchrow Scientific",
-  "license": "SEE LICENSE IN LICENSE",
-  "dependencies": {}
+  "license": "MIT",
+  "dependencies": {},
+  "publishConfig": {
+    "registry": "http://registry.npmjs.com"
+  }
 }
