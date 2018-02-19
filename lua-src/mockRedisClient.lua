@@ -138,10 +138,10 @@ return function(redis, redisConfig)
   end
 
   redis.replicate_commands = function()
-    redis.call('set', '__replicate_commands_invoked__', 1)
+    client:set('__replicate_commands_invoked__', 1)
   end
   redis.set_repl = function(arg)
-    redis.call('set', '__replicate_commands_mode__', arg)
+    client:set('__replicate_commands_mode__', tostring(arg or 'undefined'))
   end
 
   return redis
