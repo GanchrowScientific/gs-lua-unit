@@ -137,5 +137,12 @@ return function(redis, redisConfig)
     print(msg)
   end
 
+  redis.replicate_commands = function()
+    redis.call('set', '__replicate_commands_invoked__', 1)
+  end
+  redis.set_repl = function(arg)
+    redis.call('set', '__replicate_commands_mode__', arg)
+  end
+
   return redis
 end
