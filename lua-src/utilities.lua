@@ -26,6 +26,21 @@ function Module.vectorEquals(a, b)
   end
 end
 
+function Module.fieldCompare(t1, t2)
+  local ty1 = type(t1)
+  local ty2 = type(t2)
+  if ty1 ~= ty2 then return false end
+  if ty1 ~= 'table' and ty2 ~= 'table' then return t1 == t2 end
+  local bool = true
+  for k, v in pairs(t1) do
+    if not (Module.fieldCompare(v, t2[k])) then
+      bool = false
+      break
+    end
+  end
+  return bool
+end
+
 function Module.convertToDictionary(t, valCB)
   local key
   local dict = {}

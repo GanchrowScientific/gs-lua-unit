@@ -34,7 +34,8 @@ function Expector:expectStrictEqual(...)
 
   if expected ~= actual then
     table.insert(self.failures, msg .. ' FAILED ' ..
-      utils.toDebugString(expected) .. ' ~= ' .. utils.toDebugString(actual))
+      utils.toDebugString(expected) .. ' ~= ' .. utils.toDebugString(actual)
+    )
     table.insert(self.failures, debug.traceback())
   end
 end
@@ -49,7 +50,23 @@ function Expector:expectDeepEqual(...)
 
   if not utils.deepcompare(expected, actual, true) then
     table.insert(self.failures, msg .. ' FAILED ' ..
-      utils.toDebugString(expected) .. ' deep equal ' .. utils.toDebugString(actual))
+      utils.toDebugString(expected) .. ' deep equal ' .. utils.toDebugString(actual)
+    )
+    table.insert(self.failures, debug.traceback())
+  end
+end
+
+function Expector:expectFieldEqual(...)
+  local msg, expected, actual = unpack({...})
+  if select('#', ...) == 2 then
+    actual = expected
+    expected = msg
+    msg = 'Checking field equality'
+  end
+  if not utils.fieldCompare(expected, actual) then
+    table.insert(self.failures, msg .. ' FAILED ' ..
+      utils.toDebugString(expected) .. ' field Equal ' .. utils.toDebugString(actual)
+    )
     table.insert(self.failures, debug.traceback())
   end
 end
