@@ -1,6 +1,7 @@
 {
   "name": "gs-lua-unit",
-  "version": "1.3.4",
+  "version": "1.3.5",
+  "keywords": ["redis", "lua", "unit", "testing", "lua-scripts"],
   "repository": "https://github.com/GanchrowScientific/gs-lua-unit",
   "description": "Ganchrow Scientific Lua Unit Testing Framework",
   "scripts": {
