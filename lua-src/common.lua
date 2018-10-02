@@ -6,9 +6,16 @@
 
 -- Require globally
 cjson = require('cjson')
-yaml = require('yaml')
+yaml = require('lyaml')
 redis = require('redis')
 bit = require('bit')
+
+yaml.loadpath = function(file)
+  local f = io.open(file, 'r')
+  local contents = f:read('*all')
+  f:close()
+  return yaml.load(contents)
+end
 
 -- ensure helper modules or mocks are required over actual modules
 local dir = arg[0]:match('(.*/)') or ''

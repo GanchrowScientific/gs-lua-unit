@@ -37,11 +37,6 @@ return function(redis, redisConfig)
     os.exit(1)
   end
 
-  print(redisConfig.host)
-  print(redisConfig.port)
-  print(redisConfig.auth_pass)
-  print(os.getenv('EXECUTION_ENVIRONMENT'))
-
   local client = redis.connect(redisConfig.host, redisConfig.port)
   if redisConfig.auth_pass then
     local ok, res = pcall(function() return client:auth(redisConfig.auth_pass) end)
