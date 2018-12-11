@@ -68,6 +68,7 @@ return function(redis, redisConfig)
         table.insert(buffer, '*' .. tostring(#args + 1) .. "\r\n")
         table.insert(buffer, '$' .. #cmd .. "\r\n" .. cmd .. "\r\n")
         for _, v in ipairs(args) do
+          v = tostring(v)
           table.insert(buffer, '$' .. #v .. "\r\n" .. v .. "\r\n")
         end
 
