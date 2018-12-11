@@ -1,8 +1,8 @@
--- Copyright © 2017 Ganchrow Scientific, SA all rights reserved
+-- Copyright © 2017-2018 Ganchrow Scientific, SA all rights reserved
 --
 
 -- luacheck: ignore 111
--- luacheck: globals redis cjson yaml
+-- luacheck: globals redis cjson yaml bit
 
 -- Require globally
 cjson = require('cjson')
