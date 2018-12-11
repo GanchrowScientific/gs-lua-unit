@@ -55,6 +55,27 @@ return function(redis, redisConfig)
     client:flushdb()
   end
 
+  for _, cmd in ipairs({
+    'xack', 'xadd', 'xclaim',
+    'xgroup', 'xinfo', 'xlen',
+    'xpending', 'xreadgroup', 'xrevrange',
+    'xread', 'xdel', 'xrange', 'xtrim'
+  }) do
+    if not client[cmd] then
+      client[cmd] = function(self, ...)
+        local args = {...}
+        local buffer = { }
+        table.insert(buffer, '*' .. tostring(#args + 1) .. "\r\n")
+        table.insert(buffer, '$' .. #cmd .. "\r\n" .. cmd .. "\r\n")
+        for _, v in ipairs(args) do
+          table.insert(buffer, '$' .. #v .. "\r\n" .. v .. "\r\n")
+        end
+
+        return self:raw_cmd(table.concat(buffer))
+      end
+    end
+  end
+
   local function invoke(cmd, ...)
     local chunk = assert(loadstring('return client:' .. cmd .. '(...)'))
     local sandbox_env = setmetatable({ client = client }, {__index = _G})
