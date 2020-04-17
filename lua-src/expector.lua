@@ -26,7 +26,15 @@ end
 
 function Expector:expectStrictEqual(...)
   local msg, expected, actual = unpack({...})
-  if select('#', ...) == 2 then
+  local numberOfArgs = select('#', ...)
+
+  if numberOfArgs < 2 or numberOfArgs > 3 then
+    table.insert(self.failures, msg .. ' FAILED ' ..
+    'Wrong number of arguments for expectStrictEqual')
+    return
+  end
+
+  if numberOfArgs == 2 then
     actual = expected
     expected = msg
     msg = 'Checking strict equality'
@@ -42,7 +50,15 @@ end
 
 function Expector:expectDeepEqual(...)
   local msg, expected, actual = unpack({...})
-  if select('#', ...) == 2 then
+  local numberOfArgs = select('#', ...)
+
+  if numberOfArgs < 2 or numberOfArgs > 3 then
+    table.insert(self.failures, msg .. ' FAILED ' ..
+    'Wrong number of arguments for expectDeepEqual')
+    return
+  end
+
+  if numberOfArgs == 2 then
     actual = expected
     expected = msg
     msg = 'Checking deep equality'
