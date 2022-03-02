@@ -1,4 +1,4 @@
--- Copyright © 2017-2018 Ganchrow Scientific, SA all rights reserved
+-- Copyright © 2017-2022 Ganchrow Scientific, SA all rights reserved
 --
 
 -- luacheck: ignore 111
@@ -99,6 +99,10 @@ local function doTest(name, with)
   local shouldBeTrue = safeCall(with, expector, 'expect', { testResult, expector, moduleToTest })
   safeCall(with, expector, 'tearDown', {})
   expector:done(shouldBeTrue)
+end
+
+function connectMockRedis(redisConfig)
+  return mockRedisClient(redis, redisConfig)
 end
 
 function runTests(tests, redisConfig, overrideBaseDir)
