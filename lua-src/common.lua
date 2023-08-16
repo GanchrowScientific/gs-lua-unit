@@ -83,7 +83,7 @@ local function safeCall(with, expector, methodName, args, failMsg)
 end
 
 local function doTest(name, with)
-  if focussedTest and not (focussedTest == name) then
+  if focussedTest and (focussedTest ~= name) then
     return
   end
   local expector = Expector:new(name, with.tag)

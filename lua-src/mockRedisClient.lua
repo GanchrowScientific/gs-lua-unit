@@ -27,7 +27,7 @@ return function(redis, redisConfig)
     executionEnv = 'DEVELOPMENT'
   end
 
-  if not (type(redisConfig) == 'table') then
+  if (type(redisConfig) ~= 'table') then
     local config = yaml.loadpath(redisConfig or 'configs/redis.yaml')
     redisConfig = get_config_option.get(config, executionEnv, 'mockRedis', 'host', 'port', 'auth_pass', 'db', 'flush')
   end
@@ -160,6 +160,7 @@ return function(redis, redisConfig)
   redis.set_repl = function(arg)
     client:set('__replicate_commands_mode__', tostring(arg or 'undefined'))
   end
+  redis.pcall = redis.call
 
   return redis
 end
